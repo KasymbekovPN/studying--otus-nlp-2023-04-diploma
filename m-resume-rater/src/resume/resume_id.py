@@ -1,27 +1,38 @@
+import validators
+
+from enum import Enum
+
+from src.result.result import Result, Status
+
+
+class ResumeIdKind(Enum):
+    URL = 0
+
+
 class ResumeId:
-    KIND_URL = 0
+    def __init__(self, kind: ResumeIdKind, value) -> None:
+        self._kind = kind
+        self._value = value
 
-    def __init__(self, kind: int, url: str) -> None:
-        pass
+    def __repr__(self):
+        return f'ResumeId {{ kind: {self.kind}, value: {self.value} }}'
+
+    # todo checking of types -- through decorator ?
+    def __eq__(self, other):
+        if type(self) != type(other):
+            return False
+        return self.kind == other.kind and self.value == other.value
+
+    @property
+    def kind(self) -> ResumeIdKind:
+        return self._kind
+
+    @property
+    def value(self):
+        return self._value
 
     @staticmethod
-    def check_kind(kind: int) -> bool:
-        print(ResumeId.KIND_URL)
-        return False
-
-    @staticmethod
-    def check_url(url: str) -> bool:
-        pass
-
-# todo del
-# >>> import validators
-# >>> validators.url("http://google.com")
-# True
-# >>> validators.url("http://google")
-# ValidationFailure(func=url, args={'value': 'http://google', 'require_tld': True})
-# >>> if not validators.url("http://google"):
-# ...     print "not valid"
-# ...
-# not valid
-# >>>
-# Install it from PyPI with pip (pip install validators).
+    def url(value: str) -> Result:
+        return Result.ok(ResumeId(ResumeIdKind.URL, value)) \
+            if validators.url(value) \
+            else Result.fail(Status('resume.id.creation.bad-url', url=value))
