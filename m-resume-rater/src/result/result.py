@@ -57,8 +57,8 @@ class Result:
         return Result(False, None, [status])
 
     @staticmethod
-    def simple_fail(template: str):
-        return Result(False, None, [Status(template)])
+    def simple_fail(template: str, **kwargs):
+        return Result(False, None, [Status(template, **kwargs)])
 
     @staticmethod
     def full(success: bool, value, statuses: list[Status]):

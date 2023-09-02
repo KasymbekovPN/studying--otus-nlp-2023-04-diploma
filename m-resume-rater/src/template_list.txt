@@ -7,3 +7,20 @@ resume.id.creation.bad-url
 2.
 resume.part.ngrams-computer.absence
 
+3.
+interpreter.getting.raw.unsupported
+{
+    class_name: '...'
+}
+
+4.
+interpreter.getting.ngrams.computer-absence
+{
+    class_name = '...'
+}
+
+5.
+interpreter.getting.nwords.computer-absence
+{
+    class_name = '...'
+}
