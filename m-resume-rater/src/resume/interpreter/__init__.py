@@ -2,7 +2,7 @@ from src.resume.interpreter.base_interpreter import BaseInterpreter
 from src.resume.interpreter.cv_interpreter import CVInterpreter
 from src.resume.interpreter.education_interpreter import EducationInterpreter
 from src.resume.interpreter.refresher_cources_interpreter import RefresherCoursesInterpreter
-from src.resume.interpreter.short_about import ShortAboutInterpreter
+from src.resume.interpreter.short_about_interpreter import ShortAboutInterpreter
 from src.resume.interpreter.skills_interpreter import SkillsInterpreter
 from src.resume.interpreter.specialization_interpreter import SpecializationInterpreter
 from src.resume.interpreter.work_experience_interpreter import WorkExperienceInterpreter
