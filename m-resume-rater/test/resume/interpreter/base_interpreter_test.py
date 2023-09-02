@@ -1,10 +1,9 @@
 import unittest
 
 from parameterized import parameterized
-from src.resume.interpreter import BaseInterpreter
 from src.utils import NGramsComputer, NWordsComputer
 from src.result import Result
-from src.resume import Resume, Id
+from src.resume import Resume, Id, BaseInterpreter
 
 
 class TestCase(unittest.TestCase):

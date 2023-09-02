@@ -2,7 +2,7 @@ import validators
 
 from enum import Enum
 
-from src.result.result import Result, Status
+from src.result import Result, Status
 
 
 class IdKind(Enum):

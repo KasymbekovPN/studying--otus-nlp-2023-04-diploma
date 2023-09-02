@@ -1,4 +1,3 @@
-# todo remake imports everywhere
 from src.result import Result
 from src.resume import Resume
 from src.utils import NGramsComputer, NWordsComputer

@@ -1,9 +1,7 @@
 import unittest
 
 from parameterized import parameterized
-from src.resume.parts.id import Id
-from src.resume.parts.part import Part
-from src.resume.resume import Resume
+from src.resume import Id, Part, Resume
 
 
 class TestCase(unittest.TestCase):

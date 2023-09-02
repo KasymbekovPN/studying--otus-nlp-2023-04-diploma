@@ -1,1 +1,1 @@
-from src.result.result import Result
+from src.result.result import Result, Status

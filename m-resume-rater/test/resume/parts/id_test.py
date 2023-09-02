@@ -2,7 +2,7 @@ import unittest
 
 from parameterized import parameterized
 
-from src.result.result import Result, Status
+from src.result import Result, Status
 from src.resume.parts.id import Id, IdKind
 
 

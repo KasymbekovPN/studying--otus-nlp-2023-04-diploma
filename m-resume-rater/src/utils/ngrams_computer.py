@@ -1,4 +1,4 @@
-from src.result.result import Result
+from src.result import Result
 
 
 class NGramsComputer:
