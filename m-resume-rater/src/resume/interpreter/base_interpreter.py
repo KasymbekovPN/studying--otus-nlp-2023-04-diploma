@@ -12,6 +12,10 @@ class BaseInterpreter:
         self._ngrams_computer = BaseInterpreter.check_ngrams_computer(kwargs)
         self._nwords_computer = BaseInterpreter.check_nwords_computer(kwargs)
 
+    @property
+    def resume(self):
+        return self._resume
+
     def raw(self) -> Result:
         return Result.simple_fail('interpreter.getting.raw.unsupported', class_name=self.__class__.__name__)
 

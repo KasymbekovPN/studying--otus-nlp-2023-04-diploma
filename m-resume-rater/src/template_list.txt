@@ -24,3 +24,9 @@ interpreter.getting.nwords.computer-absence
 {
     class_name = '...'
 }
+
+6.
+resume.cv.absence
+{
+    id: ...
+}
