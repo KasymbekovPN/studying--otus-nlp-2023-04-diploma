@@ -3,3 +3,7 @@ resume.id.creation.bad-url
 {
     url: '...'
 }
+
+2.
+resume.part.ngrams-computer.absence
+

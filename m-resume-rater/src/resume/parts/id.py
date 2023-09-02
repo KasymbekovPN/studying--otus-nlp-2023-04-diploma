@@ -5,12 +5,12 @@ from enum import Enum
 from src.result.result import Result, Status
 
 
-class ResumeIdKind(Enum):
+class IdKind(Enum):
     URL = 0
 
 
-class ResumeId:
-    def __init__(self, kind: ResumeIdKind, value) -> None:
+class Id:
+    def __init__(self, kind: IdKind, value) -> None:
         self._kind = kind
         self._value = value
 
@@ -19,12 +19,12 @@ class ResumeId:
 
     # todo checking of types -- through decorator ?
     def __eq__(self, other):
-        if type(self) != type(other):
-            return False
-        return self.kind == other.kind and self.value == other.value
+        return isinstance(other, self.__class__) \
+            and self.kind == other.kind \
+            and self.value == other.value
 
     @property
-    def kind(self) -> ResumeIdKind:
+    def kind(self) -> IdKind:
         return self._kind
 
     @property
@@ -33,6 +33,6 @@ class ResumeId:
 
     @staticmethod
     def url(value: str) -> Result:
-        return Result.ok(ResumeId(ResumeIdKind.URL, value)) \
+        return Result.ok(Id(IdKind.URL, value)) \
             if validators.url(value) \
             else Result.fail(Status('resume.id.creation.bad-url', url=value))

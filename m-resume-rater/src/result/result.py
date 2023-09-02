@@ -7,10 +7,10 @@ class Status:
     def __repr__(self) -> str:
         return f'Status {{ template: {self._template}, args: {self._args} }}'
 
-    def __eq__(self, other):
-        if type(self) != type(other):
-            return False
-        return self.template == other.template and self.args == other.args
+    def __eq__(self, other) -> bool:
+        return isinstance(other, self.__class__) \
+            and self.template == other.template \
+            and self.args == other.args
 
     @property
     def template(self) -> str:
@@ -30,12 +30,11 @@ class Result:
     def __repr__(self) -> str:
         return f'Result {{ success: {self.success}, value: {self.value}, statuses: {self.statuses} }}'
 
-    def __eq__(self, other):
-        if type(self) != type(other):
-            return False
-        return self.success == other.success and \
-            self.value == other.value and \
-            self.statuses == other.statuses
+    def __eq__(self, other) -> bool:
+        return isinstance(other, self.__class__) \
+            and self.success == other.success \
+            and self.value == other.value \
+            and self.statuses == other.statuses
 
     @property
     def success(self) -> bool:
