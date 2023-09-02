@@ -3,7 +3,7 @@ import unittest
 from parameterized import parameterized
 
 from src.result.result import Result, Status
-from src.resume.resume_id import ResumeId, ResumeIdKind
+from src.resume.parts.resume_id import ResumeId, ResumeIdKind
 
 
 class TestCase(unittest.TestCase):
