@@ -54,3 +54,9 @@ resume.skills.absence
 {
     id: ...
 }
+
+11.
+resume.specialization.absence
+{
+    id: ...
+}
