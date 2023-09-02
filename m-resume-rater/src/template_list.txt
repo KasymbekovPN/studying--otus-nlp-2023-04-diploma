@@ -42,3 +42,9 @@ resume.refresher-courses.absence
 {
     id: ...
 }
+
+9.
+resume.short-about.absence
+{
+    id: ...
+}

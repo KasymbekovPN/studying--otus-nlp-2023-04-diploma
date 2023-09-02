@@ -1,9 +1,15 @@
+from src.result import Result
+from src.resume.interpreter import BaseInterpreter
 
 
-class ShortAboutInterpreter:
-    # todo impl
-    pass
+class ShortAboutInterpreter(BaseInterpreter):
+    def raw(self) -> Result:
+        short_about = self.resume.short_about
+        return Result.simple_fail('resume.short-about.absence', id=self.resume.resume_id) \
+            if short_about is None \
+            else Result.ok(short_about)
 
+# todo del
 # ------- short_about
 # Москва
 
