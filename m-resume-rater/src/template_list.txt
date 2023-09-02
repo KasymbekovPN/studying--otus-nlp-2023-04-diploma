@@ -60,3 +60,9 @@ resume.specialization.absence
 {
     id: ...
 }
+
+12.
+resume.work-experience.absence
+{
+    id: ...
+}
