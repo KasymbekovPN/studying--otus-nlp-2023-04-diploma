@@ -9,6 +9,8 @@ class ShortAboutInterpreter(BaseInterpreter):
             if short_about is None \
             else Result.ok(short_about)
 
+#  todo off ngrams/nwords ???
+
 # todo del
 # ------- short_about
 # Москва

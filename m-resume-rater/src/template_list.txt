@@ -48,3 +48,9 @@ resume.short-about.absence
 {
     id: ...
 }
+
+10.
+resume.skills.absence
+{
+    id: ...
+}
