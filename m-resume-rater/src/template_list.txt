@@ -30,3 +30,9 @@ resume.cv.absence
 {
     id: ...
 }
+
+7.
+resume.education.absence
+{
+    id: ...
+}
