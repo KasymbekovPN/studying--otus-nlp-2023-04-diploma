@@ -2,6 +2,7 @@ from src.result import Result
 from src.resume.interpreter import BaseInterpreter
 
 
+# todo ???
 class RefresherCoursesInterpreter(BaseInterpreter):
     def raw(self) -> Result:
         refresher_courses = self.resume.refresher_courses

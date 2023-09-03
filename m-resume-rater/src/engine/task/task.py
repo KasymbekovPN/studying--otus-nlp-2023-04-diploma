@@ -1,31 +1,24 @@
-from src.engine import TaskKind
-from src.resume import Id as ResumeId
+from src.engine import TaskId
+from src.resume import Part as ResumePart
 
 
-def generate_own_task_id(kind: TaskKind, prev_value: int):
-    return prev_value + 1
-
-
-class TaskId:
-    def __init__(self,
-                 resume: ResumeId,
-                 own: int) -> None:
-        self._resume = resume
-        self._own = own
+class Task:
+    def __init__(self, task_id: TaskId, part: ResumePart):
+        self._task_id = task_id
+        self._part = part
 
     def __repr__(self):
-        return f'TaskId {{ resume: {self.resume.value}, own: {self.own} }}'
+        return f'Task {{ id: {self.task_id}, {self.part}'
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
-        return self.resume == other.resume and self.own == other.own
+        return self.task_id == other.task_id and self.part == other.part
 
     @property
-    def resume(self):
-        return self._resume
+    def task_id(self):
+        return self._task_id
 
     @property
-    def own(self):
-        return self._own
-
+    def part(self):
+        return self._part

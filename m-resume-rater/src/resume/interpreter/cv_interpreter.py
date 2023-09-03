@@ -2,6 +2,7 @@ from src.result import Result
 from src.resume.interpreter import BaseInterpreter
 
 
+# todo ???
 class CVInterpreter(BaseInterpreter):
     def raw(self) -> Result:
         cv = self.resume.cv

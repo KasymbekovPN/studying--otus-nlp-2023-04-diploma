@@ -2,6 +2,7 @@ from src.result import Result
 from src.resume.interpreter import BaseInterpreter
 
 
+# todo ???
 class SkillsInterpreter(BaseInterpreter):
     def raw(self) -> Result:
         skills = self.resume.skills

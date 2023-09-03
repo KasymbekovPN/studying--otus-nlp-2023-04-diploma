@@ -2,6 +2,7 @@ from src.result import Result
 from src.resume.interpreter import BaseInterpreter
 
 
+# todo ???
 class SpecializationInterpreter(BaseInterpreter):
     def raw(self) -> Result:
         specialization = self.resume.specialization

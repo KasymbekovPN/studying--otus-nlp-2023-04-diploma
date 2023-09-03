@@ -3,6 +3,7 @@ from src.resume import Resume
 from src.utils import NGramsComputer, NWordsComputer
 
 
+# todo ???
 class BaseInterpreter:
     NGRAMS_COMPUTER_KEY = 'ngrams'
     NWORDS_COMPUTER_KEY = 'nwords'
