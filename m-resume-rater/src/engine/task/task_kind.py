@@ -1,6 +1,7 @@
 from enum import Enum
 
 
+# todo del
 class TaskKind(Enum):
     SHUTDOWN = -1
     CV = 0

@@ -2,6 +2,7 @@ from src.engine.task.task_kind import TaskKind
 from src.resume import Id as ResumeId
 
 
+# todo del
 def generate_own_task_id(kind: TaskKind, prev_value: int):
     return prev_value + 1
 

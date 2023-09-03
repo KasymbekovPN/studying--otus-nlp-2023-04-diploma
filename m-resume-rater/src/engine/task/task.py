@@ -2,6 +2,7 @@ from src.engine import TaskId
 from src.resume import Part as ResumePart
 
 
+# todo del
 class Task:
     def __init__(self, task_id: TaskId, part: ResumePart):
         self._task_id = task_id
