@@ -27,6 +27,18 @@ class Resume:
         self._work_experience = extract(self.WORK_EXPERIENCE_KEYS, kwargs)
         self._skills = extract(self.SKILLS_KEYS, kwargs)
 
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        return self.resume_id == other.resume_id \
+            and self.short_about == other.short_about \
+            and self.specialization == other.specialization \
+            and self.cv == other.cv \
+            and self.education == other.education \
+            and self.refresher_courses == other.refresher_courses \
+            and self.work_experience == other.work_experience \
+            and self.skills == other.skills
+
     @property
     def resume_id(self) -> Id:
         return self._resume_id
