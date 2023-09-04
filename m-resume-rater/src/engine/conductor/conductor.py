@@ -1,5 +1,12 @@
 from queue import Queue
+from threading import Thread
+
 from src.resume import Entity
+from src.conversation.shutdown_request import ShutdownRequest
+from src.conversation.conductor.request import Request as ConductorRequest
+from src.conversation.conductor.response import Response as ConductorResponse
+from src.conversation.engine.request import Request as EngineRequest
+from src.conversation.engine.response import Response as EngineResponse
 
 
 def handle_init_queue_name(init_name: str) -> tuple:
@@ -9,44 +16,68 @@ def handle_init_queue_name(init_name: str) -> tuple:
             for e in Entity:
                 if e.value[1] == split_name[1]:
                     return True, e, split_name[2]
+    print(f'Bad name: {init_name}')
     return False, None, None
 
 
 class Conductor:
     def __init__(self,
-                 input_queue: Queue,
-                 controller_queue: Queue,
+                 q__input: Queue,
+                 q__controller: Queue,
                  handler=handle_init_queue_name,
                  **kwargs):
-        # key example, education_default_queue
-        pass
+        self._q__input = q__input
+        self._q__controller = q__controller
+        self._queues = {}
+        self._waited = {}
+        for name, queue in kwargs.items():
+            success, entity, label = handler(name)
+            if success:
+                if entity not in self._queues:
+                    self._queues[entity] = {}
+                self._queues[entity][label] = queue
+
+    def next_item(self):
+        return self._q__input.get()
+
+    def send_request(self, request: ConductorRequest) -> None:
+        s = set()
+        for entity, queues_by_labels in self._queues.items():
+            resume = request.resume
+            part = resume.get(entity)
+            for label, queue in queues_by_labels.items():
+                s.add(f'{entity.value[1]}_{label}')# todo method
+                queue.put(EngineRequest(request.idx, resume.resume_id, part))
+        self._waited[request.idx] = s
+
+    def receive_response(self, response: EngineResponse) -> None:
+        idx = response.idx
+        sid = f'{response.entity.value[1]}_{response.label}'# todo method
+        if idx in self._waited:
+            self._waited[idx].remove(sid)
+            if len(self._waited[idx]) == 0:
+                del self._waited[idx]
+                self._q__controller.put(ConductorResponse(idx, response.resume_id, response.rate))
 
 
+def consume(conductor: Conductor):
+    print('\nCONDUCTOR is started.')
 
-# todo ????
-# from queue import Queue
-# from threading import Thread
-# from telebot import TeleBot
-#
-# from src.hw_005_bot.model.model import Model
-# from src.hw_005_bot.execution.task import Task
-#
-#
-# def consume_pq_task(queue: Queue, model: Model, bot: TeleBot):
-#     print('\nPQ TASK CONSUMER is started.')
-#
-#     while True:
-#         task = queue.get()
-#         if task.kind == Task.KIND_SHUTDOWN:
-#             break
-#         if task.kind == Task.KIND_PQ:
-#             result = task.get()
-#             exec_result = model.execute(result['question'], result['passage'])
-#             bot.send_message(result['user_id'], exec_result)
-#
-#     print('\nPQ TASK CONSUMER is done.')
-#
-#
-# def start_pq_task_consumer(queue: Queue, model: Model, bot: TeleBot):
-#     consumer = Thread(target=consume_pq_task, args=(queue, model, bot))
-#     consumer.start()
+    while True:
+        item = conductor.next_item()
+        if isinstance(item, ShutdownRequest.__class__):
+            break
+        elif isinstance(item, ConductorRequest.__class__):
+            conductor.send_request(item)
+        elif isinstance(item, EngineResponse.__class__):
+            conductor.receive_response(item)
+
+    print('\nCONDUCTOR is done.')
+
+
+def start_conductor(q__input: Queue,
+                    q__controller: Queue,
+                    **kwargs):
+    conductor = Conductor(q__input, q__controller, **kwargs)
+    consumer = Thread(target=consume, args=(conductor,))
+    consumer.start()

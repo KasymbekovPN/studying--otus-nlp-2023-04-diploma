@@ -1,5 +1,6 @@
 from src.resume.parts.id import Id
 from src.resume.parts.part import Part
+from src.resume.entity.entity import Entity
 
 
 class Resume:
@@ -70,3 +71,22 @@ class Resume:
     @property
     def skills(self) -> Part | None:
         return self._skills
+
+    # todo remake & test
+    def get(self, entity: Entity) -> Part | None:
+        if entity == Entity.CV:
+            return self.cv
+        elif entity == Entity.EDUCATION:
+            return self.education
+        elif entity == Entity.REFRESHER_COURSES:
+            return self.refresher_courses
+        elif entity == Entity.SHORT_ABOUT:
+            return self.short_about
+        elif entity == Entity.SKILLS:
+            return self.skills
+        elif entity == Entity.SPECIALIZATION:
+            return self.specialization
+        elif entity == Entity.WORK_EXPERIENCE:
+            return self.work_experience
+        return None
+
