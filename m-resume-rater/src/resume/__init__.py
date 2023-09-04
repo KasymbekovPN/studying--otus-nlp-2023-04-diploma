@@ -10,3 +10,4 @@ from src.resume.interpreter import (
     SpecializationInterpreter,
     WorkExperienceInterpreter
 )
+from src.resume.entity import Entity

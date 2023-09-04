@@ -1,8 +1,24 @@
 from queue import Queue
+from src.resume import Entity
+
+
+def handle_init_queue_name(init_name: str) -> tuple:
+    if init_name is not None:
+        split_name = init_name.split('__')
+        if len(split_name) == 3 and split_name[0] == 'q':
+            for e in Entity:
+                if e.value[1] == split_name[1]:
+                    return True, e, split_name[2]
+    return False, None, None
 
 
 class Conductor:
-    def __init__(self):
+    def __init__(self,
+                 input_queue: Queue,
+                 controller_queue: Queue,
+                 handler=handle_init_queue_name,
+                 **kwargs):
+        # key example, education_default_queue
         pass
 
 
