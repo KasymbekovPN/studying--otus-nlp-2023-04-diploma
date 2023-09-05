@@ -65,11 +65,11 @@ def consume(conductor: Conductor):
 
     while True:
         item = conductor.next_item()
-        if isinstance(item, ShutdownRequest.__class__):
+        if isinstance(item, ShutdownRequest):
             break
-        elif isinstance(item, ConductorRequest.__class__):
+        elif isinstance(item, ConductorRequest):
             conductor.send_request(item)
-        elif isinstance(item, EngineResponse.__class__):
+        elif isinstance(item, EngineResponse):
             conductor.receive_response(item)
 
     print('\nCONDUCTOR is done.')

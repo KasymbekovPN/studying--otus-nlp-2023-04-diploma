@@ -35,9 +35,9 @@ def consume(engine: Engine) -> None:
 
     while True:
         item = engine.next_item()
-        if isinstance(item, ShutdownRequest.__class__):
+        if isinstance(item, ShutdownRequest):
             break
-        elif isinstance(item, Request.__class__):
+        elif isinstance(item, Request):
             engine.execute(item)
 
     print(f'\n[{engine.NAME}] is done.')
