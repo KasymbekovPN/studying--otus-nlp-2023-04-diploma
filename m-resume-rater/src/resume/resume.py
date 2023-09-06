@@ -90,3 +90,20 @@ class Resume:
             return self.work_experience
         return None
 
+    # todo remake & test
+    def set(self, entity: Entity, part: Part) -> None:
+        if entity == Entity.CV:
+            self._cv = part
+        elif entity == Entity.EDUCATION:
+            self._education = part
+        elif entity == Entity.REFRESHER_COURSES:
+            self._refresher_courses = part
+        elif entity == Entity.SHORT_ABOUT:
+            self._short_about = part
+        elif entity == Entity.SKILLS:
+            self._skills = part
+        elif entity == Entity.SPECIALIZATION:
+            self._specialization = part
+        elif entity == Entity.WORK_EXPERIENCE:
+            self._work_experience = part
+
