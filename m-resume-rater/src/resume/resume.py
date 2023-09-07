@@ -11,6 +11,7 @@ class Resume:
     REFRESHER_COURSES_KEYS = ('refresher_courses',)
     WORK_EXPERIENCE_KEYS = ('work_experience',)
     SKILLS_KEYS = ('skills',)
+    POSITION = ('position',)
 
     def __init__(self, resume_id: Id, **kwargs):
         def extract(keys: tuple, args: dict) -> Part | None:
@@ -20,6 +21,7 @@ class Resume:
             return None
 
         self._resume_id = resume_id
+        # todo move it to dict !!!
         self._short_about = extract(self.SHORT_ABOUT_KEYS, kwargs)
         self._specialization = extract(self.SPECIALIZATION_KEYS, kwargs)
         self._cv = extract(self.CV_KEYS, kwargs)
@@ -27,6 +29,7 @@ class Resume:
         self._refresher_courses = extract(self.REFRESHER_COURSES_KEYS, kwargs)
         self._work_experience = extract(self.WORK_EXPERIENCE_KEYS, kwargs)
         self._skills = extract(self.SKILLS_KEYS, kwargs)
+        self._position = extract(self.POSITION, kwargs)
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -38,7 +41,8 @@ class Resume:
             and self.education == other.education \
             and self.refresher_courses == other.refresher_courses \
             and self.work_experience == other.work_experience \
-            and self.skills == other.skills
+            and self.skills == other.skills \
+            and self.position == other.position
 
     @property
     def resume_id(self) -> Id:
@@ -72,6 +76,10 @@ class Resume:
     def skills(self) -> Part | None:
         return self._skills
 
+    @property
+    def position(self) -> Part | None:
+        return self._position
+
     # todo remake & test
     def get(self, entity: Entity) -> Part | None:
         if entity == Entity.CV:
@@ -88,6 +96,8 @@ class Resume:
             return self.specialization
         elif entity == Entity.WORK_EXPERIENCE:
             return self.work_experience
+        elif entity == Entity.POSITION:
+            return self.position
         return None
 
     # todo remake & test
@@ -106,4 +116,5 @@ class Resume:
             self._specialization = part
         elif entity == Entity.WORK_EXPERIENCE:
             self._work_experience = part
-
+        elif entity == Entity.POSITION:
+            self._position = part
