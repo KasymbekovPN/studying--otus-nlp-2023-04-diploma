@@ -8,4 +8,5 @@ class Entity(Enum):
     SHORT_ABOUT = 3, 'short_about'
     SKILLS = 4, 'skills'
     SPECIALIZATION = 5, 'specialization'
-    WORK_EXPERIENCE = 6, 'work_experience'
+    WORK_EXPERIENCE = 6, 'work_experience',
+    POSITION = 7, 'position'
