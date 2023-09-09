@@ -19,15 +19,23 @@ def prepare_simple_list_content(content: str) -> list:
 
 # todo text
 class Corpus:
-    def __init__(self, embeddings):
+    def __init__(self, values, embeddings):
+        self._values = values
         self._embeddings = embeddings
+
+    def __len__(self) -> int:
+        return len(self._embeddings)
+
+    @property
+    def values(self):
+        return self._values
 
     @property
     def embeddings(self):
         return self._embeddings
 
     @staticmethod
-    def create(source, encoder, extractor=extract_from_text_file, handler=prepare_simple_list_content):
+    def create(source, embedder, extractor=extract_from_text_file, handler=prepare_simple_list_content):
         content = extractor(source)
         if content is None:
             return Result.simple_fail('corpus.source.non-exist', source=source)
@@ -36,7 +44,7 @@ class Corpus:
             return Result.simple_fail('corpus.source.empty', source=source)
 
         corpus_embeddings = embedder.encode(sentences, convert_to_tensor=True)
-        return Result.ok(Corpus(corpus_embeddings))
+        return Result.ok(Corpus(sentences, corpus_embeddings))
 
 
 # todo del
