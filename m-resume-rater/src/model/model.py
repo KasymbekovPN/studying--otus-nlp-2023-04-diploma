@@ -1,5 +1,6 @@
 from src.rate import Rate
 from src.resume import Part
+from src.utils import NWordsComputer
 
 
 # todo impl + test

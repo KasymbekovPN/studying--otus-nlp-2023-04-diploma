@@ -66,3 +66,15 @@ resume.work-experience.absence
 {
     id: ...
 }
+
+13.
+corpus.source.non-exist
+{
+    source: ...
+}
+
+14.
+corpus.source.empty
+{
+    source: ...
+}
