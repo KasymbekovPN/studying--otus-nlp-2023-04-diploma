@@ -9,7 +9,7 @@ from src.conversation.conductor.response import Response
 class TestCase(unittest.TestCase):
     _IDX = 123
     _RESUME_ID = ResumeId.url('https://10.0.0.1').value
-    _RATE = Rate(0)
+    _RATE = Rate()
 
     def test_response_idx_getting(self):
         response = Response(self._IDX, self._RESUME_ID, self._RATE)
@@ -25,33 +25,33 @@ class TestCase(unittest.TestCase):
 
     @parameterized.expand([
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1)),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
                 None,
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1)),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
                 123,
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1)),
-                Response(2, ResumeId.url('https://10.0.0.1').value, Rate(1)),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
+                Response(2, ResumeId.url('https://10.0.0.1').value, Rate()),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1)),
-                Response(1, ResumeId.url('https://10.0.0.2').value, Rate(1)),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
+                Response(1, ResumeId.url('https://10.0.0.2').value, Rate()),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1)),
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(2)),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1)),
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1)),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
                 True
         ),
     ])

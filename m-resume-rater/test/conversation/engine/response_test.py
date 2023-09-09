@@ -9,7 +9,7 @@ from src.conversation.engine.response import Response
 class TestCase(unittest.TestCase):
     _IDX = 123
     _RESUME_ID = ResumeId.url('https://10.0.0.1').value
-    _RATE = Rate(1)
+    _RATE = Rate()
     _ENTITY = Entity.WORK_EXPERIENCE
     _LABEL = 'default'
 
@@ -35,43 +35,43 @@ class TestCase(unittest.TestCase):
 
     @parameterized.expand([
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
                 None,
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
                 123,
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default'),
-                Response(2, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
+                Response(2, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default'),
-                Response(1, ResumeId.url('https://10.0.0.2').value, Rate(1), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.2').value, Rate(), Entity.CV, 'default'),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default'),
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(2), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default'),
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.SKILLS, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.SKILLS, 'default'),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default'),
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default1'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default1'),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default'),
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(1), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(), Entity.CV, 'default'),
                 True
         )
     ])

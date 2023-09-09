@@ -6,6 +6,6 @@ from src.resume import Part
 class Model:
     def execute(self, part: Part) -> Rate:
         # todo del: it's temporary Rate instance
-        temp_rate = Rate(1)
+        temp_rate = Rate()
 
         return temp_rate
