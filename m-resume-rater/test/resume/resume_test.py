@@ -1,7 +1,7 @@
 import unittest
 
 from parameterized import parameterized
-from src.resume import Id, Part, Resume
+from src.resume import Id, Part, Resume, Entity
 
 
 class TestCase(unittest.TestCase):
@@ -21,64 +21,22 @@ class TestCase(unittest.TestCase):
         (Part('p0'), Part('p0')),
         (Part('p0', 'p1'), Part('p0', 'p1')),
     ])
-    def test_short_about_getting(self, init_part: Part, expected_part: Part):
-        args = {Resume.SHORT_ABOUT_KEYS[0]: init_part}
-        resume = Resume(TestCase.ID, **args)
-        self.assertEqual(expected_part, resume.short_about)
+    def test_getting(self, init_part: Part, expected_part: Part):
+        for entity in Entity:
+            args = {entity.value[1]: init_part}
+            resume = Resume(TestCase.ID, **args)
+            self.assertEqual(expected_part, resume.get(entity))
 
     @parameterized.expand([
-        (Part('p0'), Part('p0')),
-        (Part('p0', 'p1'), Part('p0', 'p1')),
+        (Part('p0'), ),
+        (Part('p0', 'p1'), ),
     ])
-    def test_specialization_getting(self, init_part: Part, expected_part: Part):
-        args = {Resume.SPECIALIZATION_KEYS[0]: init_part}
-        resume = Resume(TestCase.ID, **args)
-        self.assertEqual(expected_part, resume.specialization)
-
-    @parameterized.expand([
-        (Part('p0'), Part('p0')),
-        (Part('p0', 'p1'), Part('p0', 'p1')),
-    ])
-    def test_cv_getting(self, init_part: Part, expected_part: Part):
-        args = {Resume.CV_KEYS[0]: init_part}
-        resume = Resume(TestCase.ID, **args)
-        self.assertEqual(expected_part, resume.cv)
-
-    @parameterized.expand([
-        (Part('p0'), Part('p0')),
-        (Part('p0', 'p1'), Part('p0', 'p1')),
-    ])
-    def test_education_getting(self, init_part: Part, expected_part: Part):
-        args = {Resume.EDUCATION_KEYS[0]: init_part}
-        resume = Resume(TestCase.ID, **args)
-        self.assertEqual(expected_part, resume.education)
-
-    @parameterized.expand([
-        (Part('p0'), Part('p0')),
-        (Part('p0', 'p1'), Part('p0', 'p1')),
-    ])
-    def test_refresher_courses_getting(self, init_part: Part, expected_part: Part):
-        args = {Resume.REFRESHER_COURSES_KEYS[0]: init_part}
-        resume = Resume(TestCase.ID, **args)
-        self.assertEqual(expected_part, resume.refresher_courses)
-
-    @parameterized.expand([
-        (Part('p0'), Part('p0')),
-        (Part('p0', 'p1'), Part('p0', 'p1')),
-    ])
-    def test_work_experience_getting(self, init_part: Part, expected_part: Part):
-        args = {Resume.WORK_EXPERIENCE_KEYS[0]: init_part}
-        resume = Resume(TestCase.ID, **args)
-        self.assertEqual(expected_part, resume.work_experience)
-
-    @parameterized.expand([
-        (Part('p0'), Part('p0')),
-        (Part('p0', 'p1'), Part('p0', 'p1')),
-    ])
-    def test_skills_getting(self, init_part: Part, expected_part: Part):
-        args = {Resume.SKILLS_KEYS[0]: init_part}
-        resume = Resume(TestCase.ID, **args)
-        self.assertEqual(expected_part, resume.skills)
+    def test_setting(self, expected_part: Part):
+        for entity in Entity:
+            resume = Resume(TestCase.ID)
+            self.assertEqual(None, resume.get(entity))
+            resume.set(entity, expected_part)
+            self.assertEqual(expected_part, resume.get(entity))
 
 
 if __name__ == '__main__':
