@@ -69,7 +69,7 @@ class TestCase(unittest.TestCase):
     def test_receive_response(self):
         request_id = 123
         resume_id = ResumeId.url('https://10.0.0.1').value
-        rate = Rate(0)
+        rate = Rate()
         q_collector = TestCase.TestQueue()
         q_input = Queue()
         conductor = Conductor(q_input, q_collector)
