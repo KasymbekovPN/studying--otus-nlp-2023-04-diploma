@@ -39,8 +39,16 @@ class Rates:
     def __init__(self):
         self._rates = {}
 
-    def add(self, label: str, rate: Rate):
-        self._rates[label] = rate
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Rates):
+            return False
+        return self._rates == other._rates
+
+    def add(self, rate: Rate):
+        entity = rate.entity
+        if entity not in self._rates:
+            self._rates[entity] = {}
+        self._rates[entity][rate.label] = rate
 
 
 # todo del
@@ -53,4 +61,7 @@ if __name__ == '__main__':
     #
     # r2 = Rate.collect_rates(r1, r0)
     # print(r2._values)
+    rate_ = Rate(Entity.CV, 'default')
+    rates_ = Rates()
+    rates_.add(rate_)
     pass

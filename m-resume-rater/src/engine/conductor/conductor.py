@@ -1,6 +1,7 @@
 from queue import Queue
 from threading import Thread
 
+from src.rate import Rates
 from src.resume import Entity
 from src.conversation.shutdown_request import ShutdownRequest
 from src.conversation.conductor.request import Request as ConductorRequest
@@ -30,6 +31,7 @@ class Conductor:
         self._q__controller = q__controller
         self._queues = {}
         self._waited = {}
+        self._rates = {}
         for name, queue in kwargs.items():
             success, entity, label = handler(name)
             if success:
@@ -49,15 +51,19 @@ class Conductor:
                 s.add(f'{entity.value[1]}_{label}')# todo method
                 queue.put(EngineRequest(request.idx, resume.resume_id, part))
         self._waited[request.idx] = s
+        self._rates[request.idx] = Rates()
 
     def receive_response(self, response: EngineResponse) -> None:
         idx = response.idx
-        sid = f'{response.entity.value[1]}_{response.label}'# todo method
         if idx in self._waited:
+            sid = f'{response.rate.entity.value[1]}_{response.rate.label}'
             self._waited[idx].remove(sid)
+            self._rates[idx].add(response.rate)
             if len(self._waited[idx]) == 0:
+                rates = self._rates[idx]
+                del self._rates[idx]
                 del self._waited[idx]
-                self._q__controller.put(ConductorResponse(idx, response.resume_id, response.rate))
+                self._q__controller.put(ConductorResponse(idx, response.resume_id, rates))
 
 
 def consume(conductor: Conductor):
