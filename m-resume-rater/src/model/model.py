@@ -1,28 +1,34 @@
 import torch
+
 from sentence_transformers import SentenceTransformer, util
 from src.rate import Rate
 from src.resume import Part
 from src.utils import NWordsComputer, get_torch_device
 from src.model.corpus import Corpus
+from src.utils.kwargs_util import check_type_and_get_or_default, ArgDescription
 
 
 # todo impl + test
 class Model:
+    THRESHOLD_DESCR = ArgDescription('threshold', float, 0.0)
+    TOP_K_DESCR = ArgDescription('top_k', int, 1)
+    TOP_BEST_DESCR = ArgDescription('top_best', int, 10)
+
     def __init__(self,
                  embedder: SentenceTransformer,
                  corpus: Corpus,
-                 n_words_computer: NWordsComputer,
-                 threshold: float) -> None:
+                 n_words_computer: NWordsComputer) -> None:
         self._embedder = embedder
         self._corpus = corpus
         self._n_words_computer = n_words_computer
-        self._top_k = 1 # todo ??? min(5, len(self._corpus))
-        self._description_size = 10 # todo !!!
-        self._threshold = threshold
 
-    def execute(self, part: Part) -> Rate:
+    def execute(self, part: Part, **kwargs) -> tuple:
+        threshold = check_type_and_get_or_default(kwargs, self.THRESHOLD_DESCR)
+        top_k = check_type_and_get_or_default(kwargs, self.TOP_K_DESCR)
+        top_best = check_type_and_get_or_default(kwargs, self.TOP_BEST_DESCR)
         counter = 0
         total_score = 0.0
+
         prepared_sub_sentences = self._n_words_computer.compute(part.value)
         for set_ in prepared_sub_sentences:
             # todo del
@@ -31,26 +37,28 @@ class Model:
                 # todo del
                 print('----------------------------')
                 print(f'sub: {sub}')
-                top_results = self._calculate_top_results(sub)
+                top_results = self._calculate_top_results(sub, top_k)
                 print(top_results)
 
                 for score, idx in zip(top_results[0], top_results[1]):
                     counter += 1
-                    if score >= self._threshold:
+                    if score >= threshold:
                         total_score += score
                     print(self._corpus.values[idx], "(Score: {:.4f})".format(score))
 
         print(f'total_score: {total_score}')
         print(f'avg: {total_score / counter}')
 
-        # todo del: it's temporary Rate instance
-        temp_rate = Rate(Entity.SKILLS, 'default')
-        return temp_rate
+        return ()
 
-    def _calculate_top_results(self, sub: str):
+        # todo del: it's temporary Rate instance
+        # temp_rate = Rate(Entity.SKILLS, 'default')
+        # return temp_rate
+
+    def _calculate_top_results(self, sub: str, top_k: int):
         sub_embedding = self._embedder.encode(sub, convert_to_tensor=True)
         cos_scores = util.cos_sim(sub_embedding, self._corpus.embeddings)[0]
-        return torch.topk(cos_scores, k=self._top_k)
+        return torch.topk(cos_scores, k=top_k)
 
 
 # todo del
@@ -62,24 +70,25 @@ if __name__ == '__main__':
     path = 'C:\\Users\\KasymbekovPN\\projects\\_temporary\\corpus\\dev_corpus.txt'
     pretrained_path = 'sentence-transformers/LaBSE'
 
-    embedder = SentenceTransformer(pretrained_path)
-    embedder.to(get_torch_device())
-    corpus = Corpus.create(path, embedder).value
-    computer = NWordsComputer()
+    threshold_ = 0.0
 
-    model = Model(embedder, corpus, computer, 0.0)
-    print(model)
+    embedder_ = SentenceTransformer(pretrained_path)
+    embedder_.to(get_torch_device())
+    corpus_ = Corpus.create(path, embedder_).value
+    computer_ = NWordsComputer()
+
+    model_ = Model(embedder_, corpus_, computer_)
+    print(model_)
 
     path = 'C:\\Users\\KasymbekovPN\\projects\\_temporary\\resumes\\resume5.html'
     with open(path, 'r', encoding='utf-8') as file:
-        content = file.read()
+        content_ = file.read()
 
-    adapter = Adapter()
-    adapter.extractor(Entity.WORK_EXPERIENCE, extract_work_experience_from_hh)
+    adapter_ = Adapter()
+    adapter_.extractor(Entity.WORK_EXPERIENCE, extract_work_experience_from_hh)
 
-    resume = adapter.compute_resume(ResumeId.url('https://10.0.0.1').value, content)
-    part = resume.get(Entity.WORK_EXPERIENCE)
+    resume_ = adapter_.compute_resume(ResumeId.url('https://10.0.0.1').value, content_)
+    part_ = resume_.get(Entity.WORK_EXPERIENCE)
 
-    rate = model.execute(part)
-    print(rate)
-
+    rate_ = model_.execute(part_)
+    print(rate_)
