@@ -29,16 +29,14 @@ class Model:
         counter = 0
         total_score = 0.0
 
-        prepared_sub_sentences = self._n_words_computer.compute(part.value)
-        for set_ in prepared_sub_sentences:
-            for sub in set_:
-                top_results = self._calculate_top_results(sub, top_k)
-                for score, idx in zip(top_results[0], top_results[1]):
-                    counter += 1
-                    if score >= threshold:
-                        score_item = score.item()
-                        total_score += score_item
-                        holder.add(score_item, (score_item, sub, self._corpus.values[idx]))
+        for sub in self._n_words_computer.compute(part.value):
+            top_results = self._calculate_top_results(sub, top_k)
+            for score, idx in zip(top_results[0], top_results[1]):
+                counter += 1
+                if score >= threshold:
+                    score_item = score.item()
+                    total_score += score_item
+                    holder.add(score_item, (score_item, sub, self._corpus.values[idx]))
 
         return total_score / counter, holder.get()
 

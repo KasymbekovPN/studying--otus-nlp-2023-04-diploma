@@ -10,8 +10,8 @@ class NWordsComputer:
         _max = self._check_and_get_max(max_border, self._min)
         self._ranges = [i for i in range(self._min, _max + 1)]
 
-    def compute(self, sentences: tuple) -> tuple:
-        result = []
+    def compute(self, sentences: tuple) -> set:
+        result = set()
         for sentence in sentences:
             sub_sentences = set()
             words = sentence.split(' ')
@@ -21,8 +21,8 @@ class NWordsComputer:
                     sub_words = self._create_line(words, start, range_border)
                     if len(sub_words) >= self._min:
                         sub_sentences.add(' '.join(sub_words))
-            result.append(sub_sentences)
-        return tuple(result)
+            result = result.union(sub_sentences)
+        return result
 
     @classmethod
     def _check_and_get_min(cls, raw_value) -> int:
@@ -65,7 +65,8 @@ if __name__ == '__main__':
     print(resume.get(Entity.WORK_EXPERIENCE))
 
     computer = NWordsComputer(5, 7)
-    result = computer.compute(resume.get(Entity.WORK_EXPERIENCE).value)
+    result_ = computer.compute(resume.get(Entity.WORK_EXPERIENCE).value)
+    print(result_)
 
     # words = ['', 'Я', 'написал', 'бэкенд', 'для', 'сервиса,', 'который', 'позволит', 'пользователям', 'делиться', 'информацией', 'об', 'интересных', 'событиях', 'и', 'находить', 'компанию', 'для', 'участия', 'в', 'них']
     # s = NWordsComputer._create_line(words, 3, 5)
