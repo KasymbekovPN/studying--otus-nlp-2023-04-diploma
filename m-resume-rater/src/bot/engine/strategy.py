@@ -20,6 +20,9 @@ class BaseEngineStrategy:
         bot.send_message(user_id, f'ECHO: {result}')
 
 
+# todo ???
+class StartCommandEngineStrategy(BaseEngineStrategy):
+    pass
 # class StartCommandEngineStrategy(BaseEngineStrategy):
 #     def execute(self,
 #                 user_id: int,

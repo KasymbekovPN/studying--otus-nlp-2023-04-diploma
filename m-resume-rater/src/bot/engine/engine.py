@@ -8,16 +8,14 @@ from src.bot.user import Users
 
 class Engine:
     def __init__(self,
-                 q_input: Queue,
                  bot: TeleBot,
                  chain: Chain,
                  users: Users) -> None:
-        self._q_input = q_input
         self._bot = bot
         self._chain = chain
         self._users = users
 
-    def set_update(self, update: Update):
+    def handle_update(self, update: Update, queue: Queue) -> None:
         if update is None or update.message is None:
             return
 
@@ -25,4 +23,7 @@ class Engine:
         user_id = update.message.from_user.id
         result = self._chain(text=text)
 
-        result.strategy.execute(user_id, result, self._bot, self._q_input, self._users, update)
+        result.strategy.execute(user_id, result, self._bot, queue, self._users, update)
+
+    def send_message(self, user_id: int, text: str) -> None:
+        self._bot.send_message(user_id, text)
