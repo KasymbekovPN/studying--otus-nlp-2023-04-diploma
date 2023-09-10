@@ -22,8 +22,8 @@ class BotController:
         self._bot_engine = bot_engine
 
     def handle_update(self, update: Update):
+        # todo del
         print(update)
-
         self._bot_engine.handle_update(update, self._q_conductor)
 
         pass

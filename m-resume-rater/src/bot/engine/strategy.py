@@ -14,28 +14,25 @@ class BaseEngineStrategy:
                 user_id: int,
                 result,
                 bot: TeleBot,
-                task_queue: Queue,
+                conductor_queue: Queue,
                 users: Users,
                 update: Update):
         bot.send_message(user_id, f'ECHO: {result}')
 
 
-# todo ???
 class StartCommandEngineStrategy(BaseEngineStrategy):
-    pass
-# class StartCommandEngineStrategy(BaseEngineStrategy):
-#     def execute(self,
-#                 user_id: int,
-#                 result,
-#                 bot: TeleBot,
-#                 task_queue: Queue,
-#                 users: Users,
-#                 update: Update):
-#         user = users.get_or_add(user_id)
-#         user.reset()
-#         bot.send_message(user_id, 'Привет, я - перезапущен.')
-#
-#
+    def execute(self,
+                user_id: int,
+                result,
+                bot: TeleBot,
+                conductor_queue: Queue,
+                users: Users,
+                update: Update):
+        user = users.get_or_add(user_id)
+        user.state = UserState.INIT
+        bot.send_message(user_id, 'Hello, I am restarted!')
+
+# todo del
 # class QuestionCommandEngineStrategy(BaseEngineStrategy):
 #     def execute(self,
 #                 user_id: int,
@@ -152,19 +149,17 @@ class StartCommandEngineStrategy(BaseEngineStrategy):
 #         bot.send_message(user_id, answer)
 
 
-# todo ???
 class UnknownCommandEngineStrategy(BaseEngineStrategy):
-    pass
-    # def execute(self,
-    #             user_id: int,
-    #             result,
-    #             bot: TeleBot,
-    #             task_queue: Queue,
-    #             users: Users,
-    #             update: Update):
-    #     user = users.get_or_add(user_id)
-    #     user.state = UserState.NONE
-    #     bot.send_message(user_id, f'Мне неизвестна команда {result.text}.')
+    def execute(self,
+                user_id: int,
+                result,
+                bot: TeleBot,
+                conductor_queue: Queue,
+                users: Users,
+                update: Update):
+        user = users.get_or_add(user_id)
+        user.state = UserState.NONE
+        bot.send_message(user_id, f'I do not known command {result.text}, please, enter command /start !')
 
 
 # todo ???
