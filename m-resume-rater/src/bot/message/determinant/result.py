@@ -5,6 +5,7 @@ from src.bot.engine.strategy import (
     UnknownCommandEngineStrategy,
     TextEngineStrategy
 )
+from src.adaptation.adapter.adapter import Adapter
 
 
 class ResultKind(Enum):
@@ -51,5 +52,5 @@ class Result:
         return Result(ResultKind.UNKNOWN_COMMAND, text, UnknownCommandEngineStrategy())
 
     @staticmethod
-    def create_for_text(text: str):
-        return Result(ResultKind.TEXT, text, TextEngineStrategy())
+    def create_for_text(text: str, adapter: Adapter):
+        return Result(ResultKind.TEXT, text, TextEngineStrategy(adapter))

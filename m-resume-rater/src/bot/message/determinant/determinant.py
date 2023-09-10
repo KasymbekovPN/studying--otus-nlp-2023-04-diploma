@@ -2,6 +2,7 @@ import re
 
 from src.bot.message.determinant.result import Result
 from src.bot.engine.strategy import BaseEngineStrategy
+from src.adaptation.adapter.adapter import Adapter
 
 
 class BaseDeterminant:
@@ -37,8 +38,11 @@ class AnyCommandDeterminant(BaseDeterminant):
 
 
 class TextDeterminant(BaseDeterminant):
+    def __init__(self, adapter: Adapter) -> None:
+        self._adapter = adapter
+
     def _determinate(self, text: str | None) -> Result | None:
-        return None if text is None else Result.create_for_text(text)
+        return None if text is None else Result.create_for_text(text, self._adapter)
 
 
 class DefaultDeterminant(BaseDeterminant):

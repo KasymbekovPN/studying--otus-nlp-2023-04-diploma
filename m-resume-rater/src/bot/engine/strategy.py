@@ -6,7 +6,10 @@ from telebot import TeleBot
 from telebot.types import Update
 from queue import Queue
 
+from src.resume import Id as ResumeId
 from src.bot.user import Users, UserState, User
+from src.adaptation.adapter.adapter import Adapter
+from src.conversation.conductor.request import Request as ConductorRequest
 
 
 class BaseEngineStrategy:
@@ -15,9 +18,9 @@ class BaseEngineStrategy:
                 result,
                 bot: TeleBot,
                 conductor_queue: Queue,
-                users: Users,
-                update: Update):
+                users: Users) -> dict:
         bot.send_message(user_id, f'ECHO: {result}')
+        return {}
 
 
 class StartCommandEngineStrategy(BaseEngineStrategy):
@@ -26,127 +29,11 @@ class StartCommandEngineStrategy(BaseEngineStrategy):
                 result,
                 bot: TeleBot,
                 conductor_queue: Queue,
-                users: Users,
-                update: Update):
+                users: Users) -> dict:
         user = users.get_or_add(user_id)
         user.state = UserState.INIT
         bot.send_message(user_id, 'Hello, I am restarted!')
-
-# todo del
-# class QuestionCommandEngineStrategy(BaseEngineStrategy):
-#     def execute(self,
-#                 user_id: int,
-#                 result,
-#                 bot: TeleBot,
-#                 task_queue: Queue,
-#                 users: Users,
-#                 update: Update):
-#         user = users.get_or_add(user_id)
-#         user.state = User.QUESTION_STATE
-#         bot.send_message(user_id, 'Я готов принять вопрос.')
-#
-#
-# class PassageCommandEngineStrategy(BaseEngineStrategy):
-#     def execute(self,
-#                 user_id: int,
-#                 result,
-#                 bot: TeleBot,
-#                 task_queue: Queue,
-#                 users: Users,
-#                 update: Update):
-#         user = users.get_or_add(user_id)
-#         user.state = User.PASSAGE_STATE
-#         bot.send_message(user_id, 'Я готов принять пассаж.')
-#
-#
-# class ExecCommandEngineStrategy(BaseEngineStrategy):
-#     def execute(self,
-#                 user_id: int,
-#                 result,
-#                 bot: TeleBot,
-#                 task_queue: Queue,
-#                 users: Users,
-#                 update: Update):
-#         user = users.get_or_add(user_id)
-#         error_message = self._check_user_status(user)
-#         if error_message is not None:
-#             text = error_message
-#         else:
-#             task_queue.put(Task.create_pq_task(user.question, user.passage, user_id))
-#             user.reset_with_state(User.EXEC_STATE)
-#             text = 'Задание добавлено в обработку.'
-#
-#         bot.send_message(user_id, text)
-#
-#     @staticmethod
-#     def _check_user_status(user: User) -> str | None:
-#         error_message = None
-#         if user.question is None:
-#             error_message = 'Вопрос не задан'
-#         if user.passage is None:
-#             error_message += ', пассаж не задан' if error_message is not None else 'Пассаж не задан'
-#         if error_message is not None:
-#             error_message += '.'
-#
-#         return error_message
-#
-#
-# class TaskCommandEngineStrategy(BaseEngineStrategy):
-#     def execute(self,
-#                 user_id: int,
-#                 result,
-#                 bot: TeleBot,
-#                 task_queue: Queue,
-#                 users: Users,
-#                 update: Update):
-#         user = users.get_or_add(user_id)
-#         user.reset_with_state(User.TASK_STATE)
-#         bot.send_message(user_id, 'Я готов принять задание.')
-#
-#
-# class HelpCommandEngineStrategy(BaseEngineStrategy):
-#     def execute(self,
-#                 user_id: int,
-#                 result,
-#                 bot: TeleBot,
-#                 task_queue: Queue,
-#                 users: Users,
-#                 update: Update):
-#         answer = """Описание команд:
-# /start
-#
-#     Стартовая команда, так же используется для сброса
-#     состояния.
-#
-# /help
-#
-#     Команда для вывода справки.
-#
-# /passage
-#
-#     Команда для перехода в состояние ввода пассажа.
-#     После использования данной команды последний
-#     введенный текст будет запоминаться как пассаж.
-#
-# /question
-#
-#     Команда для перехода в состояние ввода вопроса.
-#     После использования данной команды последний
-#     введенный текст будет запоминаться как вопрос.
-#
-# /exec
-#
-#     Команда для перехода в состояние выполнения
-#     задания, состоящего из вопроса и пассажа.
-#
-# /task
-#
-#     Команда для введения и выполнения задания,
-#     которое представляет собой json-строку.
-#
-#     {"question": "...", "passage": "..."}
-# """
-#         bot.send_message(user_id, answer)
+        return {}
 
 
 class UnknownCommandEngineStrategy(BaseEngineStrategy):
@@ -155,57 +42,51 @@ class UnknownCommandEngineStrategy(BaseEngineStrategy):
                 result,
                 bot: TeleBot,
                 conductor_queue: Queue,
-                users: Users,
-                update: Update):
+                users: Users) -> dict:
         user = users.get_or_add(user_id)
         user.state = UserState.NONE
         bot.send_message(user_id, f'I do not known command {result.text}, please, enter command /start !')
+        return {}
 
 
-# todo ???
 class TextEngineStrategy(BaseEngineStrategy):
-    pass
-# class TextEngineStrategy(BaseEngineStrategy):
-#     def execute(self,
-#                 user_id: int,
-#                 result,
-#                 bot: TeleBot,
-#                 task_queue: Queue,
-#                 users: Users,
-#                 update: Update):
-#         user = users.get_or_add(user_id)
-#         if user.state == User.PASSAGE_STATE:
-#             user.passage = result.text
-#             text = self._create_passage_question_answer('Задан новый пассаж:', user)
-#         elif user.state == User.QUESTION_STATE:
-#             user.question = result.text
-#             text = self._create_passage_question_answer('Задан новый вопрос:', user)
-#         elif user.state == User.TASK_STATE:
-#             text, task = self._prepare_task(result.text)
-#             if task is not None:
-#                 task_queue.put(Task.create_pq_task(task['question'], task["passage"], user_id))
-#                 user.reset_with_state(User.EXEC_STATE)
-#         else:
-#             text = 'Перед вводом вопроса или пассажа введите соответствующие команды ( /question /passage ).'
-#         bot.send_message(user_id, text)
-#
-#     @staticmethod
-#     def _create_passage_question_answer(title: str, user: User):
-#         return f'{title}\n\nТекущий вопрос:\n\n{user.question}\n\nТекущий пассаж:\n\n{user.passage}'
-#
-#     @staticmethod
-#     def _prepare_task(line: str) -> tuple:
-#         task = None
-#         try:
-#             task = json.loads(line)
-#             text = 'Задание добавлено в обработку.' \
-#                 if 'question' in task and 'passage' in task \
-#                 else 'Задание не содержит question и/или passage.'
-#         except Exception:
-#             text = 'Задание имеет неверный формат.'
-#
-#         return text, task
-#
-#
-# if __name__ == '__main__':
-#     pass
+    def __init__(self, adapter: Adapter) -> None:
+        self._adapter = adapter
+        self._counter = 0
+
+    def execute(self,
+                user_id: int,
+                result,
+                bot: TeleBot,
+                conductor_queue: Queue,
+                users: Users) -> dict:
+        ret = {}
+        user = users.get_or_add(user_id)
+        success, message = self._check_user_state(user)
+        if success:
+            user.state = UserState.EXEC
+            message = f'Processing of {result.text} is started!'
+
+            # todo !!! check url
+
+            # todo temporary !!!
+            path = 'C:\\Users\\KasymbekovPN\\projects\\_temporary\\resumes\\resume5.html'
+            with open(path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            resume = self._adapter.compute_resume(ResumeId.url('https://10.0.0.1').value, content)
+            conductor_queue.put(ConductorRequest(self._counter, resume))
+            ret['request_id'] = self._counter
+            self._counter += 1
+
+        bot.send_message(user_id, message)
+        return ret
+
+    @staticmethod
+    def _check_user_state(user: User) -> tuple:
+        state = user.state
+        if state == UserState.NONE:
+            return False, 'The bot is not started, please, enter /start !'
+        elif state == UserState.INIT:
+            return True, None
+        else:
+            return False, 'The bot is executing resume, please, wait !'

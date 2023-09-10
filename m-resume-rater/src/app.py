@@ -61,7 +61,7 @@ def run():
     chain = Chain([
         SpecificCommandDeterminant('/start', StartCommandEngineStrategy()),
         AnyCommandDeterminant(),
-        TextDeterminant()
+        TextDeterminant(adapter)
     ])
 
     token = os.environ.get(TOKEN_VAR_NAME)
@@ -71,7 +71,7 @@ def run():
 
     engine = Engine(bot, chain, users)
 
-    controller = start_controller(q_controller, q_conductor, adapter, engine)
+    controller = start_controller(q_controller, q_conductor, engine)
     start_engine(q_we_engine_default, q_conductor, model)
     start_conductor(q_conductor, q_controller, q__work_experience__default=q_we_engine_default)
 
