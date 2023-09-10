@@ -1,14 +1,14 @@
 import torch
 
 from sentence_transformers import SentenceTransformer, util
-from src.rate import Rate
 from src.resume import Part
 from src.utils import NWordsComputer, get_torch_device
 from src.model.corpus import Corpus
 from src.utils.kwargs_util import check_type_and_get_or_default, ArgDescription
+from src.utils.limited_sorted_holder import Holder
 
 
-# todo impl + test
+# todo test
 class Model:
     THRESHOLD_DESCR = ArgDescription('threshold', float, 0.0)
     TOP_K_DESCR = ArgDescription('top_k', int, 1)
@@ -25,35 +25,22 @@ class Model:
     def execute(self, part: Part, **kwargs) -> tuple:
         threshold = check_type_and_get_or_default(kwargs, self.THRESHOLD_DESCR)
         top_k = check_type_and_get_or_default(kwargs, self.TOP_K_DESCR)
-        top_best = check_type_and_get_or_default(kwargs, self.TOP_BEST_DESCR)
+        holder = Holder(check_type_and_get_or_default(kwargs, self.TOP_BEST_DESCR))
         counter = 0
         total_score = 0.0
 
         prepared_sub_sentences = self._n_words_computer.compute(part.value)
         for set_ in prepared_sub_sentences:
-            # todo del
-            # print('+++++++++++++++++++++++++++++++++')
             for sub in set_:
-                # todo del
-                print('----------------------------')
-                print(f'sub: {sub}')
                 top_results = self._calculate_top_results(sub, top_k)
-                print(top_results)
-
                 for score, idx in zip(top_results[0], top_results[1]):
                     counter += 1
                     if score >= threshold:
-                        total_score += score
-                    print(self._corpus.values[idx], "(Score: {:.4f})".format(score))
+                        score_item = score.item()
+                        total_score += score_item
+                        holder.add(score_item, (score_item, sub, self._corpus.values[idx]))
 
-        print(f'total_score: {total_score}')
-        print(f'avg: {total_score / counter}')
-
-        return ()
-
-        # todo del: it's temporary Rate instance
-        # temp_rate = Rate(Entity.SKILLS, 'default')
-        # return temp_rate
+        return total_score / counter, holder.get()
 
     def _calculate_top_results(self, sub: str, top_k: int):
         sub_embedding = self._embedder.encode(sub, convert_to_tensor=True)
@@ -90,5 +77,5 @@ if __name__ == '__main__':
     resume_ = adapter_.compute_resume(ResumeId.url('https://10.0.0.1').value, content_)
     part_ = resume_.get(Entity.WORK_EXPERIENCE)
 
-    rate_ = model_.execute(part_)
-    print(rate_)
+    result_ = model_.execute(part_)
+    print(result_)
