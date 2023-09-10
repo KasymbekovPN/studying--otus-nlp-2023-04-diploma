@@ -44,7 +44,7 @@ class Model:
         print(f'avg: {total_score / counter}')
 
         # todo del: it's temporary Rate instance
-        temp_rate = Rate()
+        temp_rate = Rate(Entity.SKILLS, 'default')
         return temp_rate
 
     def _calculate_top_results(self, sub: str):

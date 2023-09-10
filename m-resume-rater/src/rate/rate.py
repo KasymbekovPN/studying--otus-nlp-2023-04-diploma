@@ -1,21 +1,36 @@
+from src.resume import Entity
+
 
 # todo test
 class Rate:
-    def __init__(self, value=0.0, description=''):
+    def __init__(self, entity: Entity, label: str, value=0.0, description=''):
+        self._entity = entity
+        self._label = label
         self._value = value
         self._description = description
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
-        return self.value == other.value and self.description == other.description
+        return self.value == other.value and \
+            self.description == other.description and \
+            self.entity == other.entity and \
+            self.label == other.label
 
     @property
-    def value(self):
+    def entity(self) -> Entity:
+        return self._entity
+
+    @property
+    def label(self) -> str:
+        return self._label
+
+    @property
+    def value(self) -> float:
         return self._value
 
     @property
-    def description(self):
+    def description(self) -> str:
         return self._description
 
 

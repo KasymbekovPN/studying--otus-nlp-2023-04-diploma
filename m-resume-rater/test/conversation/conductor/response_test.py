@@ -1,7 +1,7 @@
 import unittest
 
 from parameterized import parameterized
-from src.resume import Id as ResumeId
+from src.resume import Id as ResumeId, Entity
 from src.rate import Rate
 from src.conversation.conductor.response import Response
 
@@ -9,7 +9,7 @@ from src.conversation.conductor.response import Response
 class TestCase(unittest.TestCase):
     _IDX = 123
     _RESUME_ID = ResumeId.url('https://10.0.0.1').value
-    _RATE = Rate()
+    _RATE = Rate(Entity.CV, 'default')
 
     def test_response_idx_getting(self):
         response = Response(self._IDX, self._RESUME_ID, self._RATE)
@@ -25,33 +25,33 @@ class TestCase(unittest.TestCase):
 
     @parameterized.expand([
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(Entity.CV, 'default')),
                 None,
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(Entity.CV, 'default')),
                 123,
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
-                Response(2, ResumeId.url('https://10.0.0.1').value, Rate()),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(Entity.CV, 'default')),
+                Response(2, ResumeId.url('https://10.0.0.1').value, Rate(Entity.CV, 'default')),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
-                Response(1, ResumeId.url('https://10.0.0.2').value, Rate()),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(Entity.CV, 'default')),
+                Response(1, ResumeId.url('https://10.0.0.2').value, Rate(Entity.CV, 'default')),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(Entity.CV, 'default')),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(Entity.SKILLS, 'default')),
                 False
         ),
         (
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
-                Response(1, ResumeId.url('https://10.0.0.1').value, Rate()),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(Entity.CV, 'default')),
+                Response(1, ResumeId.url('https://10.0.0.1').value, Rate(Entity.CV, 'default')),
                 True
         ),
     ])
