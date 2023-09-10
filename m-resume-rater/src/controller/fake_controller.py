@@ -5,27 +5,26 @@ from src.resume import Resume, Part, Id as ResumeId
 from src.conversation.conductor.request import Request
 from src.conversation.conductor.response import Response
 from src.conversation.shutdown_request import ShutdownRequest
+from src.adaptation.adapter.adapter import Adapter
 
 
 class FakeController:
-    LINES = [
-        """Встраиваемых терминалов защит, которые осуществляют контроль токовых и напряженческих параметров,
-        управление контакторами на 690, 1140, 6000 В; защиты по току и напряжению, АГЗ, внешние защиты и пр.""",
-        'Блок индикации и настройки терминала защит.',
-        'Блок измерения температур',
-        'Устройство плавного пуска',
-        'Устройство сбора и хранения информации(по CAN)'
-    ]
-
     def __init__(self,
                  q__input: Queue,
-                 q__conductor: Queue) -> None:
+                 q__conductor: Queue,
+                 adapter: Adapter) -> None:
         self._q_input = q__input
         self._q_conductor = q__conductor
+        self._adapter = adapter
 
     # todo: it's temporary solution
     def send(self):
-        resume = Resume(ResumeId.url('https://10.0.0.1').value, work_experience=Part(*self.LINES))
+        # todo !!!
+        path = 'C:\\Users\\KasymbekovPN\\projects\\_temporary\\resumes\\resume5.html'
+        with open(path, 'r', encoding='utf-8') as file:
+            content = file.read()
+
+        resume = self._adapter.compute_resume(ResumeId.url('https://10.0.0.1').value, content)
         self._q_conductor.put(Request(123, resume))
 
     def next_item(self):
@@ -34,6 +33,13 @@ class FakeController:
     # todo !!!
     def apply_response(self, response: Response):
         print(f'!!! response: {response}')
+        print(f'ID: {response.idx}')
+        print(f'RESUME_ID: {response.resume_id}')
+        for entity, value in response.rates.rates.items():
+            for label, rate in value.items():
+                print(f'\n{entity.value[1]} :: {label}')
+                print(f'SCORE: {rate.value}')
+                print(f'{rate.description}')
 
 
 def consume(controller: FakeController) -> None:
@@ -50,8 +56,9 @@ def consume(controller: FakeController) -> None:
 
 
 def start_controller(q__input: Queue,
-                     q__conductor: Queue) -> FakeController:
-    controller = FakeController(q__input, q__conductor)
+                     q__conductor: Queue,
+                     adapter: Adapter) -> FakeController:
+    controller = FakeController(q__input, q__conductor, adapter)
     consumer = Thread(target=consume, args=(controller,))
     consumer.start()
 

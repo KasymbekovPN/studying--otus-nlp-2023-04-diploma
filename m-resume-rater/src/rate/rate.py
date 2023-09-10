@@ -42,7 +42,11 @@ class Rates:
     def __eq__(self, other) -> bool:
         if not isinstance(other, Rates):
             return False
-        return self._rates == other._rates
+        return self.rates == other.rates
+
+    @property
+    def rates(self) -> dict:
+        return self._rates
 
     def add(self, rate: Rate):
         entity = rate.entity
