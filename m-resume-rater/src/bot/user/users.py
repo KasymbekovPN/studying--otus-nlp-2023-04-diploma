@@ -16,6 +16,9 @@ class Users:
 
         return u
 
+    def get(self, user_id: int) -> User:
+        return self._users[user_id]
+
     def get_or_add(self, user_id: int) -> User:
         if user_id in self._users:
             return self._users[user_id]

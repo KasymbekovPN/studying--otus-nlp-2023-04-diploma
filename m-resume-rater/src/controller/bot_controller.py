@@ -2,8 +2,7 @@ from queue import Queue
 from threading import Thread
 
 from telebot.types import Update
-from src.resume import Resume, Part, Id as ResumeId
-from src.conversation.conductor.request import Request
+from src.bot.user import Users, UserState
 from src.conversation.conductor.response import Response
 from src.conversation.shutdown_request import ShutdownRequest
 from src.bot.engine.engine import Engine
@@ -13,11 +12,13 @@ class BotController:
     def __init__(self,
                  q__input: Queue,
                  q__conductor: Queue,
-                 bot_engine: Engine) -> None:
+                 bot_engine: Engine,
+                 users: Users) -> None:
         self._q_input = q__input
         self._q_conductor = q__conductor
         self._bot_engine = bot_engine
         self._user_ids = {}
+        self._users = users
 
     def handle_update(self, update: Update):
         ret = self._bot_engine.handle_update(update, self._q_conductor)
@@ -50,8 +51,12 @@ class BotController:
         #         print(f'{rate.description}')
 
         if idx in self._user_ids:
-            self._bot_engine.send_message(self._user_ids[idx], message)
+            user_id = self._user_ids[idx]
+            self._bot_engine.send_message(user_id, message)
             del self._user_ids[idx]
+
+            user = self._users.get(user_id)
+            user.state = UserState.INIT
 
 
 def consume(controller: BotController) -> None:
@@ -69,8 +74,9 @@ def consume(controller: BotController) -> None:
 
 def start_controller(q__input: Queue,
                      q__conductor: Queue,
-                     bot_engine: Engine) -> BotController:
-    controller = BotController(q__input, q__conductor, bot_engine)
+                     bot_engine: Engine,
+                     users: Users) -> BotController:
+    controller = BotController(q__input, q__conductor, bot_engine, users)
     consumer = Thread(target=consume, args=(controller,))
     consumer.start()
 
