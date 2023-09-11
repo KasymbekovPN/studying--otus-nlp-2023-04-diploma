@@ -1,3 +1,5 @@
+import re
+
 from telebot import TeleBot
 from telebot.types import Update
 from queue import Queue
@@ -27,5 +29,8 @@ class Engine:
         ret['user_id'] = user_id
         return ret
 
-    def send_message(self, user_id: int, text: str) -> None:
-        self._bot.send_message(user_id, text)
+    def send_message(self, user_id: int, text: str, parse_mode=None) -> None:
+        if parse_mode == 'Markdown':
+            text = re.sub(r'_+', ' ', text)
+
+        self._bot.send_message(user_id, text, parse_mode=parse_mode)
