@@ -28,35 +28,30 @@ class BotController:
     def next_item(self):
         return self._q_input.get()
 
-    # todo !!!
     def apply_response(self, response: Response):
         idx = response.idx
-
-        message = f'ID: {idx}\n'
-        message += f'RESUME_ID: {response.resume_id}'
-        for entity, value in response.rates.rates.items():
-            for label, rate in value.items():
-                message += f'\n{entity.value[1]} :: {label}'
-                message += f'\nSCORE: {rate.value:.4f}'
-                message += f'\n{rate.description}'
-
-        # todo del
-        # print(f'!!! response: {response}')
-        # print(f'ID: {response.idx}')
-        # print(f'RESUME_ID: {response.resume_id}')
-        # for entity, value in response.rates.rates.items():
-        #     for label, rate in value.items():
-        #         print(f'\n{entity.value[1]} :: {label}')
-        #         print(f'SCORE: {rate.value}')
-        #         print(f'{rate.description}')
-
         if idx in self._user_ids:
             user_id = self._user_ids[idx]
-            self._bot_engine.send_message(user_id, message)
+            self._users.get(user_id).state = UserState.INIT
             del self._user_ids[idx]
 
-            user = self._users.get(user_id)
-            user.state = UserState.INIT
+            for message in self._create_messages(response):
+                self._bot_engine.send_message(user_id, message, parse_mode="Markdown")
+
+    @staticmethod
+    def _create_messages(response: Response) -> tuple:
+        messages = []
+        for entity, value in response.rates.rates.items():
+            for label, rate in value.items():
+                message = f'*Request ID*: {response.idx}\n'
+                message += f'*Resume*: {response.resume_id.value}\n'
+                message += f'*Entity*: {entity.value[1]}\n'
+                message += f'*Label*: {label}\n'
+                message += f'*Score*: {rate.value:.4f}\n\n'
+                message += f'*Description*:\n{rate.description}\n'
+                messages.append(message)
+
+        return tuple(messages)
 
 
 def consume(controller: BotController) -> None:

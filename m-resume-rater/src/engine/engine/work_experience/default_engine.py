@@ -37,7 +37,7 @@ class Engine:
         result = ''
         for item in reversed(raw):
             score, part, task = item
-            result += f'{score:.4f}\n  Found: {part}\n  Task: {task}\n'
+            result += f'*{score:.4f}*\n  *Found*: {part}\n  *Task*: {task}\n'
         return result
 
 
