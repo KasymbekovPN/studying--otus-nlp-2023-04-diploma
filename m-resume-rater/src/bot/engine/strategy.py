@@ -50,9 +50,10 @@ class UnknownCommandEngineStrategy(BaseEngineStrategy):
 
 
 class TextEngineStrategy(BaseEngineStrategy):
+    _REQUEST_COUNTER = 0
+
     def __init__(self, adapter: Adapter) -> None:
         self._adapter = adapter
-        self._counter = 0
 
     def execute(self,
                 user_id: int,
@@ -65,7 +66,7 @@ class TextEngineStrategy(BaseEngineStrategy):
         success, message = self._check_user_state(user)
         if success:
             user.state = UserState.EXEC
-            message = f'Processing of {result.text} is started!'
+            message = f'Processing of {result.text} is started! REQUEST ID: {TextEngineStrategy._REQUEST_COUNTER}.'
 
             # todo !!! check url
 
@@ -74,9 +75,9 @@ class TextEngineStrategy(BaseEngineStrategy):
             with open(path, 'r', encoding='utf-8') as file:
                 content = file.read()
             resume = self._adapter.compute_resume(ResumeId.url('https://10.0.0.1').value, content)
-            conductor_queue.put(ConductorRequest(self._counter, resume))
-            ret['request_id'] = self._counter
-            self._counter += 1
+            conductor_queue.put(ConductorRequest(TextEngineStrategy._REQUEST_COUNTER, resume))
+            ret['request_id'] = TextEngineStrategy._REQUEST_COUNTER
+            TextEngineStrategy._REQUEST_COUNTER += 1
 
         bot.send_message(user_id, message)
         return ret
