@@ -7,6 +7,7 @@ from flask import Flask, request, Response
 from queue import Queue
 from sentence_transformers import SentenceTransformer
 
+from src.conversation.shutdown_request import ShutdownRequest
 from src.resume import Entity
 from src.adaptation.extractor.hh.work_experience.extractor import extract_work_experience_from_hh
 from src.adaptation.adapter.adapter import Adapter
@@ -18,10 +19,8 @@ from src.utils.torch_device import get_torch_device
 from src.utils.nwords_computer import NWordsComputer
 from src.model.corpus import Corpus
 from src.bot.engine.engine import Engine
-from src.bot.message.determinant.result import Result
 from src.bot.message.determinant.chain import Chain
 from src.bot.message.determinant.determinant import (
-    BaseDeterminant,
     AnyCommandDeterminant,
     SpecificCommandDeterminant,
     TextDeterminant
@@ -92,6 +91,12 @@ def run():
         return Response('ok', status=200) if request.method == 'POST' else ' '
 
     app.run(HOST, PORT)
+
+    q_controller.put(ShutdownRequest())
+    q_conductor.put(ShutdownRequest())
+    q_we_engine_default.put(ShutdownRequest())
+
+    print('DONE!!!')
 
 
 if __name__ == '__main__':

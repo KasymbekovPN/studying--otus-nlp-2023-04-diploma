@@ -1,5 +1,5 @@
 from src.resume import Id as ResumeId
-from src.rate import Rate, Rates
+from src.rate import Rates
 
 
 class Response:

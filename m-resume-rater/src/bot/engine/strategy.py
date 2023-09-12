@@ -1,9 +1,4 @@
-
-# todo del
-# import json
-#
 from telebot import TeleBot
-from telebot.types import Update
 from queue import Queue
 
 from src.resume import Id as ResumeId

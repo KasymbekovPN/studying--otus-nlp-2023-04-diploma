@@ -20,14 +20,3 @@ def extract_position_from_hh(soup: BeautifulSoup) -> Part:
             text = re.sub(replace_tuple[0], replace_tuple[1], text)
         result = result + text.split('.')
     return Part(*result)
-
-
-# todo del
-if __name__ == '__main__':
-    path = 'C:\\Users\\KasymbekovPN\\projects\\_temporary\\resumes\\resume5.html'
-    with open(path, 'r', encoding='utf-8') as file:
-        content = file.read()
-
-    soup = BeautifulSoup(content, 'html.parser')
-    part = extract_position_from_hh(soup)
-    print(part)
