@@ -4,10 +4,8 @@ import telebot
 
 from telebot import TeleBot
 from flask import Flask, request, Response
-from queue import Queue
 from sentence_transformers import SentenceTransformer
 
-from src.conversation.shutdown_request import ShutdownRequest
 from src.resume import Entity
 from src.adaptation.extractor.hh.work_experience.extractor import extract_work_experience_from_hh
 from src.adaptation.adapter.adapter import Adapter
@@ -29,6 +27,7 @@ from src.bot.engine.strategy import (
     StartCommandEngineStrategy
 )
 from src.bot.user import Users
+from src.queue_manager.queue_manager import QueueManager
 
 
 TOKEN_VAR_NAME = 'DEV_TELEGRAM_BOT_TOKEN'
@@ -50,9 +49,11 @@ def run():
     computer = NWordsComputer()
 
     model = Model(embedder, corpus, computer)
-    q_controller = Queue(1_000)
-    q_conductor = Queue(1_000)
-    q_we_engine_default = Queue(1_000)
+
+    queue_manager = QueueManager()
+    q_controller = queue_manager.create(1_000)
+    q_conductor = queue_manager.create(1_000)
+    q_we_engine_default = queue_manager.create(1_000)
 
     adapter = Adapter()
     adapter.extractor(Entity.WORK_EXPERIENCE, extract_work_experience_from_hh)
@@ -91,11 +92,7 @@ def run():
         return Response('ok', status=200) if request.method == 'POST' else ' '
 
     app.run(HOST, PORT)
-
-    q_controller.put(ShutdownRequest())
-    q_conductor.put(ShutdownRequest())
-    q_we_engine_default.put(ShutdownRequest())
-
+    queue_manager.stop()
     print('DONE!!!')
 
 
