@@ -2,7 +2,7 @@ import torch
 
 from sentence_transformers import SentenceTransformer, util
 from src.resume import Part
-from src.utils import NWordsComputer, get_torch_device
+from src.utils import NWordsComputer
 from src.model.corpus import Corpus
 from src.utils.kwargs_util import check_type_and_get_or_default, ArgDescription
 from src.utils.limited_sorted_holder import Holder
@@ -38,7 +38,7 @@ class Model:
                     total_score += score_item
                     holder.add(score_item, (score_item, sub, self._corpus.values[idx]))
 
-        return total_score / counter, holder.get()
+        return 0.0 if counter == 0 else total_score / counter, holder.get()
 
     def _calculate_top_results(self, sub: str, top_k: int):
         sub_embedding = self._embedder.encode(sub, convert_to_tensor=True)

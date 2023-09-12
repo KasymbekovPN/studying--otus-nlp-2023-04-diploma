@@ -17,7 +17,7 @@ class Engine:
         self._chain = chain
         self._users = users
 
-    def handle_update(self, update: Update, conductor_queue: Queue) -> dict:
+    def handle_update(self, update: Update) -> dict:
         if update is None or update.message is None:
             return {}
 
@@ -25,7 +25,7 @@ class Engine:
         user_id = update.message.from_user.id
         result = self._chain(text=text)
 
-        ret = result.strategy.execute(user_id, result, self._bot, conductor_queue, self._users)
+        ret = result.strategy.execute(user_id, result, self._bot, self._users)
         ret['user_id'] = user_id
         return ret
 
