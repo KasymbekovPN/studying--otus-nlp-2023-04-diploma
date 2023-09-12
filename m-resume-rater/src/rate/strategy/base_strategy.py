@@ -1,4 +1,0 @@
-
-# tod ???
-class BaseStrategy:
-    pass

@@ -1,9 +1,6 @@
+import os
 
-# todo del
-# import json
-#
 from telebot import TeleBot
-from telebot.types import Update
 from queue import Queue
 
 from src.resume import Id as ResumeId
@@ -17,7 +14,6 @@ class BaseEngineStrategy:
                 user_id: int,
                 result,
                 bot: TeleBot,
-                conductor_queue: Queue,
                 users: Users) -> dict:
         bot.send_message(user_id, f'ECHO: {result}')
         return {}
@@ -28,7 +24,6 @@ class StartCommandEngineStrategy(BaseEngineStrategy):
                 user_id: int,
                 result,
                 bot: TeleBot,
-                conductor_queue: Queue,
                 users: Users) -> dict:
         user = users.get_or_add(user_id)
         user.state = UserState.INIT
@@ -41,7 +36,6 @@ class UnknownCommandEngineStrategy(BaseEngineStrategy):
                 user_id: int,
                 result,
                 bot: TeleBot,
-                conductor_queue: Queue,
                 users: Users) -> dict:
         user = users.get_or_add(user_id)
         user.state = UserState.NONE
@@ -59,25 +53,26 @@ class TextEngineStrategy(BaseEngineStrategy):
                 user_id: int,
                 result,
                 bot: TeleBot,
-                conductor_queue: Queue,
                 users: Users) -> dict:
         ret = {}
         user = users.get_or_add(user_id)
         success, message = self._check_user_state(user)
         if success:
-            user.state = UserState.EXEC
-            message = f'Processing of {result.text} is started! REQUEST ID: {TextEngineStrategy._REQUEST_COUNTER}.'
+            file_path = f'C:\\Users\\KasymbekovPN\\projects\\_temporary\\resumes\\{result.text}.html'
 
-            # todo !!! check url
+            if os.path.isfile(file_path):
+                user.state = UserState.EXEC
+                message = f'Processing of {result.text} is started! REQUEST ID: {TextEngineStrategy._REQUEST_COUNTER}.'
 
-            # todo temporary !!!
-            path = 'C:\\Users\\KasymbekovPN\\projects\\_temporary\\resumes\\resume5.html'
-            with open(path, 'r', encoding='utf-8') as file:
-                content = file.read()
-            resume = self._adapter.compute_resume(ResumeId.url('https://10.0.0.1').value, content)
-            conductor_queue.put(ConductorRequest(TextEngineStrategy._REQUEST_COUNTER, resume))
-            ret['request_id'] = TextEngineStrategy._REQUEST_COUNTER
-            TextEngineStrategy._REQUEST_COUNTER += 1
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    content = file.read()
+                resume = self._adapter.compute_resume(ResumeId.url(f'https://{result.text}.html').value, content)
+
+                ret['request_id'] = TextEngineStrategy._REQUEST_COUNTER
+                ret['conductor_request'] = ConductorRequest(TextEngineStrategy._REQUEST_COUNTER, resume)
+                TextEngineStrategy._REQUEST_COUNTER += 1
+            else:
+                message = f'Bad input: {result.text}'
 
         bot.send_message(user_id, message)
         return ret

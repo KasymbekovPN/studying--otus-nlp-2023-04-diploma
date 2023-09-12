@@ -21,9 +21,10 @@ class BotController:
         self._users = users
 
     def handle_update(self, update: Update):
-        ret = self._bot_engine.handle_update(update, self._q_conductor)
-        if 'user_id' in ret and 'request_id' in ret:
+        ret = self._bot_engine.handle_update(update)
+        if 'user_id' in ret and 'request_id' in ret and 'conductor_request' in ret:
             self._user_ids[ret['request_id']] = ret['user_id']
+            self._q_conductor.put(ret["conductor_request"])
 
     def next_item(self):
         return self._q_input.get()
@@ -48,7 +49,8 @@ class BotController:
                 message += f'*Entity*: {entity.value[1]}\n'
                 message += f'*Label*: {label}\n'
                 message += f'*Score*: {rate.value:.4f}\n\n'
-                message += f'*Description*:\n{rate.description}\n'
+                if len(rate.description) > 0:
+                    message += f'*Description*:\n{rate.description}\n'
                 messages.append(message)
 
         return tuple(messages)

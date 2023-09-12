@@ -59,17 +59,3 @@ class Holder:
         for _ in range(self._queue.qsize()):
             result.append(self._queue.get().value)
         return tuple(result)
-
-
-# todo del
-if __name__ == '__main__':
-    h = Holder(3)
-    h.add(110.0, '110.0')
-    h.add(120.0, '120.0')
-    h.add(1.23, '1.23')
-    h.add(-10.0, '-10.0')
-    h.add(0.0, '0.0')
-    h.add(10.0, '10.0')
-
-    print(h.get())
-    pass

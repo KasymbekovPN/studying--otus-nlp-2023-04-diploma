@@ -2,7 +2,7 @@ import torch
 
 from sentence_transformers import SentenceTransformer, util
 from src.resume import Part
-from src.utils import NWordsComputer, get_torch_device
+from src.utils import NWordsComputer
 from src.model.corpus import Corpus
 from src.utils.kwargs_util import check_type_and_get_or_default, ArgDescription
 from src.utils.limited_sorted_holder import Holder
@@ -38,42 +38,9 @@ class Model:
                     total_score += score_item
                     holder.add(score_item, (score_item, sub, self._corpus.values[idx]))
 
-        return total_score / counter, holder.get()
+        return 0.0 if counter == 0 else total_score / counter, holder.get()
 
     def _calculate_top_results(self, sub: str, top_k: int):
         sub_embedding = self._embedder.encode(sub, convert_to_tensor=True)
         cos_scores = util.cos_sim(sub_embedding, self._corpus.embeddings)[0]
         return torch.topk(cos_scores, k=top_k)
-
-
-# todo del
-if __name__ == '__main__':
-    from src.resume import Id as ResumeId, Entity
-    from src.adaptation.adapter.adapter import Adapter
-    from src.adaptation.extractor.hh.work_experience.extractor import extract_work_experience_from_hh
-
-    path = 'C:\\Users\\KasymbekovPN\\projects\\_temporary\\corpus\\dev_corpus.txt'
-    pretrained_path = 'sentence-transformers/LaBSE'
-
-    threshold_ = 0.0
-
-    embedder_ = SentenceTransformer(pretrained_path)
-    embedder_.to(get_torch_device())
-    corpus_ = Corpus.create(path, embedder_).value
-    computer_ = NWordsComputer()
-
-    model_ = Model(embedder_, corpus_, computer_)
-    print(model_)
-
-    path = 'C:\\Users\\KasymbekovPN\\projects\\_temporary\\resumes\\resume5.html'
-    with open(path, 'r', encoding='utf-8') as file:
-        content_ = file.read()
-
-    adapter_ = Adapter()
-    adapter_.extractor(Entity.WORK_EXPERIENCE, extract_work_experience_from_hh)
-
-    resume_ = adapter_.compute_resume(ResumeId.url('https://10.0.0.1').value, content_)
-    part_ = resume_.get(Entity.WORK_EXPERIENCE)
-
-    result_ = model_.execute(part_)
-    print(result_)

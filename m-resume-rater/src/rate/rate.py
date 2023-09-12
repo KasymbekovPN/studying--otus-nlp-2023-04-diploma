@@ -53,19 +53,3 @@ class Rates:
         if entity not in self._rates:
             self._rates[entity] = {}
         self._rates[entity][rate.label] = rate
-
-
-# todo del
-if __name__ == '__main__':
-    # r0 = Rate.create_simple_rate('default_we', 0.1)
-    # print(r0._values)
-    #
-    # r1 = Rate.create_multi_rate(default_we=0.9, default_skills=0.6)
-    # print(r1._values)
-    #
-    # r2 = Rate.collect_rates(r1, r0)
-    # print(r2._values)
-    rate_ = Rate(Entity.CV, 'default')
-    rates_ = Rates()
-    rates_.add(rate_)
-    pass
