@@ -92,13 +92,6 @@ def run():
         return Response('ok', status=200) if request.method == 'POST' else ' '
 
     app.run(HOST, PORT)
-    # todo del
-    # @app.route(ROUTE_RULE, methods=ROUTE_METHODS)
-    # def index():
-    #     controller.send()
-    #     return ''
-    #
-    # app.run(HOST, PORT)
 
 
 if __name__ == '__main__':
